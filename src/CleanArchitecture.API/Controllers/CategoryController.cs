@@ -1,7 +1,9 @@
-﻿using CleanArchitecture.Application.Interfaces;
+﻿using CleanArchitecture.API.Tools;
+using CleanArchitecture.Application.Interfaces;
 using CleanArchitecture.Application.Requests.Category;
 using CleanArchitecture.Application.Results;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace CleanArchitecture.API.Controllers
 {
@@ -11,41 +13,51 @@ namespace CleanArchitecture.API.Controllers
     {
         [HttpGet]
         [Route("GetAllCategories")]
-        public async Task<Result> GetAll([FromServices] ICategoryService _service)
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound, Type = typeof(Result))]
+        public async Task<IActionResult> GetAll([FromServices] ICategoryService _service)
         {
-            return await _service.GetCategoriesAsync();
+            return new ParseRequestResult().ParseToActionResult(await _service.GetCategoriesAsync());
         }
 
         [HttpGet]
         [Route("GetCategoryById/{id}")]
-        public async Task<Result> GetById(int id,
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound, Type = typeof(Result))]
+        public async Task<IActionResult> GetById(int id,
             [FromServices] ICategoryService _service)
         {
-            return await _service.GetByIdAsync(id);
+            return  new ParseRequestResult().ParseToActionResult(await _service.GetByIdAsync(id));
         }
 
         [HttpPost]
         [Route("CreateCategory")]
-        public async Task<Result> Post(CreateCategoryRequest request,
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(Result))]
+        public async Task<IActionResult> Post(CreateCategoryRequest request,
             [FromServices] ICategoryService _service)
         {
-            return await _service.CreateAsync(request); 
+            return new ParseRequestResult().ParseToActionResult(await _service.CreateAsync(request)); 
         }
 
         [HttpPut]
         [Route("UpdateCategory")]
-        public async Task<Result> Put(UpdateCategoryRequest request,
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(Result))]
+        public async Task<IActionResult> Put(UpdateCategoryRequest request,
             [FromServices] ICategoryService _service)
         {
-            return await _service.UpdateAsync(request);
+            return new ParseRequestResult().ParseToActionResult(await _service.UpdateAsync(request));
         }
 
         [HttpDelete]
         [Route("DeleteCategory/{id}")]
-        public async Task<Result> Delete(int id, 
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound, Type = typeof(Result))]
+        public async Task<IActionResult> Delete(int id, 
             [FromServices] ICategoryService _service)
         {
-            return await _service.RemoveAsync(id);
+            return new ParseRequestResult().ParseToActionResult(await _service.RemoveAsync(id));
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using CleanArchitecture.Application.Interfaces;
+﻿using CleanArchitecture.API.Tools;
+using CleanArchitecture.Application.Interfaces;
 using CleanArchitecture.Application.Requests.Product;
 using CleanArchitecture.Application.Results;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace CleanArchitecture.API.Controllers
 {
@@ -11,41 +13,51 @@ namespace CleanArchitecture.API.Controllers
     {
         [HttpGet]
         [Route("GetAllCProducts")]
-        public async Task<Result> GetAll([FromServices] IProductService _service)
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound, Type = typeof(Result))]
+        public async Task<IActionResult> GetAll([FromServices] IProductService _service)
         {
-            return await _service.GetProductsAsync();
+            return new ParseRequestResult().ParseToActionResult(await _service.GetProductsAsync());
         }
 
         [HttpGet]
         [Route("GetProductById/{id}")]
-        public async Task<Result> GetById(int id,
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound, Type = typeof(Result))]
+        public async Task<IActionResult> GetById(int id,
             [FromServices] IProductService _service)
         {
-            return await _service.GetByIdAsync(id);
+            return new ParseRequestResult().ParseToActionResult(await _service.GetByIdAsync(id));
         }
 
         [HttpPost]
         [Route("CreateProduct")]
-        public async Task<Result> Post(CreateProductRequest request,
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(Result))]
+        public async Task<IActionResult> Post(CreateProductRequest request,
             [FromServices] IProductService _service)
         {
-            return await _service.CreateAsync(request);
+            return new ParseRequestResult().ParseToActionResult(await _service.CreateAsync(request));
         }
 
         [HttpPut]
         [Route("UpdateProduct")]
-        public async Task<Result> Put(UpdateProductRequest request,
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest, Type = typeof(Result))]
+        public async Task<IActionResult> Put(UpdateProductRequest request,
             [FromServices] IProductService _service)
         {
-            return await _service.UpdateAsync(request);
+            return new ParseRequestResult().ParseToActionResult(await _service.UpdateAsync(request));
         }
 
         [HttpDelete]
         [Route("DeleteProduct/{id}")]
-        public async Task<Result> Delete(int id,
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(Result))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound, Type = typeof(Result))]
+        public async Task<IActionResult> Delete(int id,
             [FromServices] IProductService _service)
         {
-            return await _service.RemoveAsync(id);
+            return new ParseRequestResult().ParseToActionResult(await _service.RemoveAsync(id));
         }
     }
 }
